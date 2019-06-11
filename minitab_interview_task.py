@@ -1,8 +1,5 @@
 import csv
 
-inputtedPath = ""
-sortTypes = ["alpha", "numeric", "both"]
-sortOrders = ["ascending", "descending"]
 csvContent = []
 
 def confirmPath(path):
@@ -23,6 +20,8 @@ def confirmPath(path):
 
 def askForSortInfo(sortInfo):
     validInfo = False
+    sortTypes = ["alpha", "numeric", "both"]
+    sortOrders = ["ascending", "descending"]
 
     while (validInfo == False):
         localSortInfo = input("Enter the " + sortInfo + ": ")
@@ -42,6 +41,7 @@ def askForSortInfo(sortInfo):
     
 
 def askForPath():
+    inputtedPath = ""
     pathConfirmed = False
     
     while (pathConfirmed == False):
