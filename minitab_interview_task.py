@@ -1,18 +1,13 @@
 import csv
 
-csvContent = []
+def confirmPath(inputtedPath):
+    global path
+    path = inputtedPath
 
-def confirmPath(path):
-    valueList = []
-    
     try:
         with open(path) as csv_file:
-            csv_reader = csv.reader(csv_file, delimiter=',')
-            for row in csv_reader:
-                valueList = []
-                for value in row:
-                    valueList.append(value)
-                csvContent.append(valueList)
+            csvReader = csv.reader(csv_file, delimiter=',')
+
     except:
         return False
 
@@ -50,105 +45,88 @@ def askForPath():
         if (confirmPath(inputtedPath) == True):
             pathConfirmed = True
         else:
-            print('That file does not exist.')
+            print("That file does not exist.")
 
-def sortAlpha():
-    sortedData = []
-    
-    for row in csvContent:
-        sortedInner = []
-        for value in row:
-            try:
-                data = float(value)
-            except:
-                sortedInner.append(value)
-        if (sortOrder == "ascending"):
-            sortedInner.sort()
-        else:
-            sortedInner.sort(reverse = True)
-
-        sortedData.append(sortedInner)
-
-    return sortedData
-
-def sortNumeric():
+def sortAlpha(valueList):
     sortedData = []
 
-    for row in csvContent:
-        rowData = []
-        sortedInner = []
-        for value in row:
-            try:
-                data = (value, float(value))
-                rowData.append(data)
-            except:
-                pass
-
-        if (sortOrder == "ascending"):
-            rowData.sort(key = lambda x: x[1])
-        else:
-            rowData.sort(key = lambda x: x[1], reverse = True)
-
-        for entry in rowData:
-            sortedInner.append(entry[0])
+    for value in valueList:
+        try:
+            data = float(value)
+        except:
+            sortedData.append(value)
             
-        sortedData.append(sortedInner)
+        if (sortOrder == "ascending"):
+            sortedData.sort()
+        else:
+            sortedData.sort(reverse = True)
 
     return sortedData
 
-def sortBoth():
+def sortNumeric(valueList):
+    sortedData = []
+    sortedInner = []
+    
+    for value in valueList:
+        try:
+            data = (value, float(value))
+            sortedInner.append(data)
+        except:
+            pass
+
+    if (sortOrder == "ascending"):
+        sortedInner.sort(key = lambda x: x[1])
+    else:
+        sortedInner.sort(key = lambda x: x[1], reverse = True)
+
+    for entry in sortedInner:
+        sortedData.append(entry[0])
+            
+    return sortedData
+
+def sortBoth(valueList):
     sortedData = []
 
-    for row in csvContent:
-        numericData = []
-        sortedNumbers = []
-        sortedStrings = []
-        sortedInner = []
-        for value in row:
-            try:
-                data = (value, float(value))
-                numericData.append(data)
-            except:
-                sortedStrings.append(value)
+    sortedNumbers = sortNumeric(valueList)
+    sortedStrings = sortAlpha(valueList)
 
-        if (sortOrder == "ascending"):
-            sortedStrings.sort()
-            numericData.sort(key = lambda x: x[1])
-            for entry in numericData:
-                sortedNumbers.append(entry[0])
-            sortedInner = sortedNumbers + sortedStrings
-        else:
-            sortedStrings.sort(reverse = True)
-            numericData.sort(key = lambda x: x[1], reverse = True)
-            for entry in numericData:
-                sortedNumbers.append(entry[0])
-            sortedInner = sortedStrings + sortedNumbers
-        
-        sortedData.append(sortedInner)
+    if (sortOrder == "ascending"):
+        sortedData = sortedNumbers + sortedStrings
+
+    else:
+        sortedData = sortedStrings + sortedNumbers
 
     return sortedData
 
 def printContents(outputContent):
-    for array in outputContent:
-        for element in range(len(array)):
-            if (element != len(array) - 1):
-                print(array[element], end = ", ")
-            else:
-                print(array[element])
+    for element in range(len(outputContent)):
+        if (element != len(outputContent) - 1):
+            print(outputContent[element], end = ", ")
+        else:
+            print(outputContent[element])
     
 def sortLines():
     outputContent = []
 
-    if (sortType == "alpha"):
-        outputContent = sortAlpha()
+    with open(path) as csv_file:
+        csvReader = csv.reader(csv_file, delimiter=',')
 
-    elif (sortType == "numeric"):
-        outputContent = sortNumeric()
+        for row in csvReader:
+            valueList = []
+                
+            for value in row:
+                valueList.append(value)
 
-    else:
-        outputContent = sortBoth()
-            
-    printContents(outputContent)
+            if (sortType == "alpha"):
+                outputContent = sortAlpha(valueList)
+
+            elif (sortType == "numeric"):
+                outputContent = sortNumeric(valueList)
+
+            else:
+                outputContent = sortBoth(valueList)
+
+            printContents(outputContent)
     
 askForPath()
 sortType = askForSortInfo("sort type")
